@@ -18,6 +18,7 @@ export async function createProduct(formData: FormData) {
     min_stock_level: Number(formData.get("min_stock_level") || 0),
     unit_cost: formData.get("unit_cost") ? Number(formData.get("unit_cost")) : null,
     unit_price: formData.get("unit_price") ? Number(formData.get("unit_price")) : null,
+    current_stock: formData.get("current_stock") ? Number(formData.get("current_stock")) : 0,
     is_active: true,
   };
 
@@ -47,8 +48,22 @@ export async function updateProduct(id: string, formData: FormData) {
   if (error) throw new Error(error.message);
 
   revalidatePath("/depo");
+  revalidatePath("/depo/urunler");
   revalidatePath(`/depo/urunler/${id}`);
-  redirect(`/depo/urunler/${id}`);
+  redirect("/depo/urunler");
+}
+
+export async function deleteProduct(formData: FormData) {
+  const supabase = await createClient();
+  const id = formData.get("id") as string;
+  if (!id) return;
+
+  // Soft delete — set is_active = false
+  await supabase.from("products").update({ is_active: false }).eq("id", id);
+
+  revalidatePath("/depo/urunler");
+  revalidatePath("/depo");
+  redirect("/depo/urunler");
 }
 
 export async function addStockMovement(formData: FormData) {
@@ -70,5 +85,9 @@ export async function addStockMovement(formData: FormData) {
   if (error) throw new Error(error.message);
 
   revalidatePath("/depo");
-  redirect("/depo/hareketler");
+  revalidatePath("/depo/urunler");
+  revalidatePath("/depo/giris");
+  revalidatePath("/depo/cikis");
+  revalidatePath("/dashboard");
+  redirect("/depo/urunler");
 }

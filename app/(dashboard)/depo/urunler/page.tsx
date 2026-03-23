@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { Plus, AlertTriangle } from "lucide-react";
+import { Plus, AlertTriangle, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatNumber, formatCurrency } from "@/lib/utils";
@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ProductDeleteButton } from "@/components/depo/product-delete-button";
 import type { Product } from "@/lib/db-types";
 
 export default async function UrunlerPage() {
@@ -50,6 +51,7 @@ export default async function UrunlerPage() {
               <TableHead className="text-right">Alış Fiyatı</TableHead>
               <TableHead className="text-right">Satış Fiyatı</TableHead>
               <TableHead>Durum</TableHead>
+              <TableHead className="text-right">İşlem</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -81,12 +83,22 @@ export default async function UrunlerPage() {
                         {isLow ? "Kritik" : "Normal"}
                       </Badge>
                     </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <Button asChild variant="ghost" size="icon" className="h-8 w-8">
+                          <Link href={`/depo/urunler/${p.id}`}>
+                            <Pencil className="w-4 h-4 text-slate-400 hover:text-slate-700" />
+                          </Link>
+                        </Button>
+                        <ProductDeleteButton id={p.id} name={p.name} />
+                      </div>
+                    </TableCell>
                   </TableRow>
                 );
               })
             ) : (
               <TableRow>
-                <TableCell colSpan={8} className="text-center py-10 text-slate-400">
+                <TableCell colSpan={9} className="text-center py-10 text-slate-400">
                   Ürün bulunamadı.{" "}
                   <Link href="/depo/urunler/yeni" className="text-green-600 hover:underline">
                     İlk ürünü ekleyin

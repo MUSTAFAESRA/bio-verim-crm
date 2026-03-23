@@ -576,6 +576,128 @@ export type Database = {
           { foreignKeyName: "leads_converted_to_fkey"; columns: ["converted_to"]; referencedRelation: "customers"; referencedColumns: ["id"]; }
         ];
       };
+      message_templates: {
+        Row: {
+          id: string;
+          title: string;
+          channel: string;
+          category: string;
+          content: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          channel: string;
+          category?: string;
+          content: string;
+          created_at?: string;
+        };
+        Update: {
+          title?: string;
+          channel?: string;
+          category?: string;
+          content?: string;
+        };
+        Relationships: [];
+      };
+      social_posts: {
+        Row: {
+          id: string;
+          platform: string;
+          post_type: string;
+          title: string;
+          content: string;
+          media_url: string | null;
+          scheduled_at: string | null;
+          published_at: string | null;
+          status: string;
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          platform: string;
+          post_type?: string;
+          title: string;
+          content: string;
+          media_url?: string | null;
+          scheduled_at?: string | null;
+          published_at?: string | null;
+          status?: string;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          platform?: string;
+          post_type?: string;
+          title?: string;
+          content?: string;
+          media_url?: string | null;
+          scheduled_at?: string | null;
+          published_at?: string | null;
+          status?: string;
+        };
+        Relationships: [];
+      };
+      contact_sequences: {
+        Row: {
+          id: string;
+          name: string;
+          description: string | null;
+          total_steps: number;
+          steps: Json;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          description?: string | null;
+          total_steps: number;
+          steps: Json;
+          created_at?: string;
+        };
+        Update: {
+          name?: string;
+          description?: string | null;
+          total_steps?: number;
+          steps?: Json;
+        };
+        Relationships: [];
+      };
+      customer_sequences: {
+        Row: {
+          id: string;
+          customer_id: string;
+          sequence_id: string;
+          started_at: string;
+          current_step: number;
+          status: string;
+          next_contact_at: string | null;
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          customer_id: string;
+          sequence_id: string;
+          started_at?: string;
+          current_step?: number;
+          status?: string;
+          next_contact_at?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          current_step?: number;
+          status?: string;
+          next_contact_at?: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "customer_sequences_customer_id_fkey"; columns: ["customer_id"]; referencedRelation: "customers"; referencedColumns: ["id"]; },
+          { foreignKeyName: "customer_sequences_sequence_id_fkey"; columns: ["sequence_id"]; referencedRelation: "contact_sequences"; referencedColumns: ["id"]; }
+        ];
+      };
     };
     Views: {
       customer_balance: {

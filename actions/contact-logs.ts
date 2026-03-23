@@ -35,7 +35,6 @@ export async function createContactLog(formData: FormData) {
   if (nextActionDate && nextAction) {
     await supabase.from("reminders").insert({
       customer_id: customerId,
-      contact_log_id: logId,
       assigned_to: user.id,
       title: nextAction,
       remind_at: new Date(nextActionDate).toISOString(),

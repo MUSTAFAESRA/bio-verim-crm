@@ -49,8 +49,58 @@ export const CONTACT_TYPE_LABELS: Record<string, string> = {
   visit: "Ziyaret",
   email: "E-posta",
   whatsapp: "WhatsApp",
+  instagram: "Instagram",
+  linkedin_dm: "LinkedIn DM",
+  facebook_dm: "Facebook Mesaj",
+  telegram: "Telegram",
   meeting: "Toplantı",
   other: "Diğer",
+};
+
+export const CONTACT_TYPE_ICONS: Record<string, string> = {
+  call: "📞",
+  visit: "🤝",
+  email: "📧",
+  whatsapp: "💬",
+  instagram: "📸",
+  linkedin_dm: "💼",
+  facebook_dm: "📘",
+  telegram: "✈️",
+  meeting: "👥",
+  other: "📝",
+};
+
+export const SOCIAL_PLATFORM_LABELS: Record<string, string> = {
+  linkedin: "LinkedIn",
+  facebook: "Facebook",
+  instagram: "Instagram",
+  youtube: "YouTube",
+};
+
+export const SOCIAL_POST_TYPE_LABELS: Record<string, string> = {
+  urun_tanitim: "Ürün Tanıtımı",
+  kampanya: "Kampanya",
+  genel: "Genel İçerik",
+};
+
+export const SOCIAL_POST_STATUS_LABELS: Record<string, string> = {
+  draft: "Taslak",
+  scheduled: "Zamanlanmış",
+  published: "Yayında",
+  cancelled: "İptal",
+};
+
+export const TEMPLATE_CATEGORY_LABELS: Record<string, string> = {
+  urun_tanitim: "Ürün Tanıtımı",
+  kampanya: "Kampanya",
+  takip: "Takip",
+  genel: "Genel",
+};
+
+export const SEQUENCE_STATUS_LABELS: Record<string, string> = {
+  active: "Aktif",
+  paused: "Duraklatıldı",
+  completed: "Tamamlandı",
 };
 
 export const OUTCOME_LABELS: Record<string, string> = {

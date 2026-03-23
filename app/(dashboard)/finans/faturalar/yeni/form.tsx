@@ -30,12 +30,18 @@ interface LineItem {
   unit_price: number;
 }
 
+interface Supplier {
+  id: string;
+  company_name: string;
+}
+
 interface Props {
   customers: Customer[];
   products: Product[];
+  suppliers: Supplier[];
 }
 
-export default function YeniFaturaForm({ customers, products }: Props) {
+export default function YeniFaturaForm({ customers, products, suppliers }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [invoiceType, setInvoiceType] = useState<"sale" | "purchase">("sale");
@@ -195,12 +201,13 @@ export default function YeniFaturaForm({ customers, products }: Props) {
               </div>
             ) : (
               <div className="col-span-2 space-y-1.5">
-                <Label htmlFor="supplier_id">Tedarikçi</Label>
-                <Input
-                  id="supplier_id"
-                  name="supplier_id"
-                  placeholder="Tedarikçi ID"
-                />
+                <Label htmlFor="supplier_id">Tedarikçi / Fason Üretici *</Label>
+                <select id="supplier_id" name="supplier_id" required className={selectClass}>
+                  <option value="">Tedarikçi seçin...</option>
+                  {suppliers.map((s) => (
+                    <option key={s.id} value={s.id}>{s.company_name}</option>
+                  ))}
+                </select>
               </div>
             )}
           </div>

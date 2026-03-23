@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   formatDate,
+  formatDateTime,
   formatCurrency,
   SEGMENT_LABELS,
   CONTACT_TYPE_LABELS,
@@ -24,6 +25,15 @@ import {
   INVOICE_STATUS_LABELS,
   SOURCE_LABELS,
 } from "@/lib/utils";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { TrendingDown, TrendingUp } from "lucide-react";
 import type { Customer, ContactLog, Invoice, CustomerBalance } from "@/lib/db-types";
 
 const SEGMENT_VARIANTS: Record<string, "warning" | "success" | "muted"> = {
@@ -40,7 +50,7 @@ export default async function MusteriDetayPage({ params }: PageProps) {
   const { id } = await params;
   const supabase = await createClient();
 
-  const [{ data: customerRaw }, { data: contactsRaw }, { data: invoicesRaw }, { data: balanceRaw }] =
+  const [{ data: customerRaw }, { data: contactsRaw }, { data: invoicesRaw }, { data: balanceRaw }, { data: paymentsRaw }] =
     await Promise.all([
       supabase.from("customers").select("*").eq("id", id).single(),
       supabase
@@ -55,13 +65,53 @@ export default async function MusteriDetayPage({ params }: PageProps) {
         .eq("customer_id", id)
         .eq("invoice_type", "sale")
         .order("invoice_date", { ascending: false })
-        .limit(10),
+        .limit(20),
       supabase.from("customer_balance").select("*").eq("id", id).single(),
+      supabase
+        .from("payments")
+        .select("*, invoices(invoice_number, customer_id)")
+        .eq("invoices.customer_id", id)
+        .order("payment_date", { ascending: false })
+        .limit(20),
     ]);
   const customer = customerRaw as unknown as Customer | null;
   const contacts = contactsRaw as unknown as ContactLog[] | null;
   const invoices = invoicesRaw as unknown as Invoice[] | null;
   const balance = balanceRaw as unknown as CustomerBalance | null;
+  const allPayments = (paymentsRaw as unknown as Array<{
+    id: string; invoice_id: string; payment_date: string;
+    amount: number; payment_method: string | null; reference_no: string | null;
+    invoices: { invoice_number: string; customer_id: string } | null;
+  }> | null)?.filter(p => p.invoices?.customer_id === id) ?? [];
+
+  // Build combined cari movements sorted by date
+  const cariMovements = [
+    ...(invoices ?? []).map(inv => ({
+      id: inv.id,
+      date: inv.invoice_date,
+      type: "invoice" as const,
+      description: `Fatura: ${inv.invoice_number}`,
+      debit: inv.total_amount ?? 0,
+      credit: 0,
+      ref: inv.id,
+    })),
+    ...allPayments.map(p => ({
+      id: p.id,
+      date: p.payment_date,
+      type: "payment" as const,
+      description: `Ödeme: ${p.invoices?.invoice_number ?? ""} ${p.reference_no ? `(${p.reference_no})` : ""}`.trim(),
+      debit: 0,
+      credit: p.amount,
+      ref: p.invoice_id,
+    })),
+  ].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  // Compute running balance
+  let running = 0;
+  const cariWithBalance = cariMovements.map(m => {
+    running += m.debit - m.credit;
+    return { ...m, balance: running };
+  });
 
   if (!customer) notFound();
 
@@ -306,6 +356,67 @@ export default async function MusteriDetayPage({ params }: PageProps) {
                 <p className="text-sm text-slate-400 text-center py-6">
                   Henüz fatura bulunmuyor
                 </p>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Cari Hareketler */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm flex items-center gap-2">
+                <TrendingDown className="w-4 h-4 text-orange-500" />
+                Cari Hesap Hareketleri
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              {cariWithBalance.length > 0 ? (
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-slate-50">
+                      <TableHead className="pl-4 text-xs">Tarih</TableHead>
+                      <TableHead className="text-xs">Hareket</TableHead>
+                      <TableHead className="text-right text-xs text-red-600">Borç</TableHead>
+                      <TableHead className="text-right text-xs text-green-600">Ödeme</TableHead>
+                      <TableHead className="text-right pr-4 text-xs">Bakiye</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {[...cariWithBalance].reverse().map((m) => (
+                      <TableRow key={m.id} className="text-sm">
+                        <TableCell className="pl-4 text-slate-500 text-xs whitespace-nowrap">
+                          {formatDate(m.date)}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1.5">
+                            {m.type === "invoice" ? (
+                              <TrendingDown className="w-3.5 h-3.5 text-red-400 flex-shrink-0" />
+                            ) : (
+                              <TrendingUp className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
+                            )}
+                            {m.type === "invoice" ? (
+                              <Link href={`/finans/faturalar/${m.ref}`} className="text-xs text-green-700 hover:underline">
+                                {m.description}
+                              </Link>
+                            ) : (
+                              <span className="text-xs text-slate-600">{m.description}</span>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-xs font-medium text-red-600">
+                          {m.debit > 0 ? formatCurrency(m.debit) : "-"}
+                        </TableCell>
+                        <TableCell className="text-right text-xs font-medium text-green-600">
+                          {m.credit > 0 ? formatCurrency(m.credit) : "-"}
+                        </TableCell>
+                        <TableCell className={`text-right pr-4 text-xs font-bold ${m.balance > 0 ? "text-red-600" : "text-green-600"}`}>
+                          {formatCurrency(m.balance)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <p className="text-sm text-slate-400 text-center py-6">Henüz hareket yok</p>
               )}
             </CardContent>
           </Card>

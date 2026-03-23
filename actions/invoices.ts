@@ -159,6 +159,19 @@ export async function addPayment(formData: FormData) {
   redirect(`/finans/faturalar/${invoiceId}`);
 }
 
+export async function confirmInvoice(id: string) {
+  const supabase = await createClient();
+  await supabase.from("invoices").update({
+    status: "sent",
+    updated_at: new Date().toISOString(),
+  }).eq("id", id);
+
+  revalidatePath(`/finans/faturalar/${id}`);
+  revalidatePath("/finans");
+  revalidatePath("/finans/tedarikci-cari");
+  revalidatePath("/finans/tedarikci-cari/[id]", "page");
+}
+
 export async function updateInvoiceStatus(id: string, status: string) {
   const supabase = await createClient();
   await supabase.from("invoices").update({

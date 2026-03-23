@@ -47,6 +47,10 @@ export default function YeniUrunPage() {
               </select>
             </div>
             <div className="space-y-1.5">
+              <Label htmlFor="current_stock">Başlangıç Stok Miktarı</Label>
+              <Input id="current_stock" name="current_stock" type="number" min="0" step="0.01" defaultValue="0" placeholder="0" />
+            </div>
+            <div className="space-y-1.5">
               <Label htmlFor="min_stock_level">Min. Stok Seviyesi</Label>
               <Input id="min_stock_level" name="min_stock_level" type="number" min="0" defaultValue="0" />
             </div>

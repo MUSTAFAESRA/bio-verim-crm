@@ -108,6 +108,99 @@ export const DEMO_LOW_STOCK = [
   { id: uuid(204), name: "Bio Verim Humik Asit 1L", sku: "BV-HG-001", current_stock: 180, min_stock_level: 300, shortage: 120 },
 ];
 
+export const DEMO_MESSAGE_TEMPLATES = [
+  { id: uuid(501), title: "WhatsApp Ürün Tanıtımı", channel: "whatsapp", category: "urun_tanitim", content: "Merhaba, Bio Verim olarak sıvı organik gübre ürünlerimizi sizinle paylaşmak istedik. Toprak sağlığını artıran, bitkisel verimliliği yüksek ürünlerimiz hakkında daha fazla bilgi almak ister misiniz? Size özel fiyatlandırma sunmaktan memnuniyet duyarız. 🌱", created_at: "2025-01-01T10:00:00Z" },
+  { id: uuid(502), title: "E-posta Katalog Gönderimi", channel: "email", category: "urun_tanitim", content: "Sayın Yetkili,\n\nBio Verim Organik Gübre ailesi olarak ürün kataloğumuzu sizinle paylaşmak istiyoruz.\n\nÜrün kataloğumuz için: [KATALOG LİNKİ]\n\nBaşlıca ürünlerimiz:\n• Sıvı Organik Gübre (1L, 5L, 20L)\n• Humik Asit\n• Fulvik Asit\n\nDetaylı bilgi ve teklif için bize ulaşabilirsiniz.\n\nSaygılarımızla,\nBio Verim Ekibi", created_at: "2025-01-01T10:00:00Z" },
+  { id: uuid(503), title: "LinkedIn Bağlantı Sonrası Tanıtım", channel: "linkedin_dm", category: "urun_tanitim", content: "Merhaba, bağlantı talebimi kabul ettiğiniz için teşekkürler. Bio Verim olarak tarım sektörüne yönelik sıvı organik gübre çözümleri sunuyoruz. Tarımsal verimliliğinizi artırmak için işbirliği yapmaktan mutluluk duyarız. Daha fazla bilgi almak ister misiniz?", created_at: "2025-01-01T10:00:00Z" },
+  { id: uuid(504), title: "WhatsApp Takip Mesajı", channel: "whatsapp", category: "takip", content: "Merhaba, geçen hafta görüşmemizin ardından ürünlerimiz hakkında düşüncelerinizi merak ettim. Herhangi bir sorunuz varsa yardımcı olmaktan memnuniyet duyarım. Aklınızda olsun, bu ay için özel fiyat teklifimiz geçerliliğini koruyor. 😊", created_at: "2025-01-01T10:00:00Z" },
+  { id: uuid(505), title: "E-posta Kampanya Duyurusu", channel: "email", category: "kampanya", content: "Sayın Değerli Müşterimiz,\n\nBahar sezonuna özel %15 indirim kampanyamız başladı!\n\nKampanya tarihleri: 1 Nisan - 30 Nisan\nGeçerli ürünler: Tüm sıvı gübre ürünleri\nMinimum sipariş: 50 litre\n\nKampanyadan yararlanmak için hemen sipariş oluşturun veya bizi arayın.\n\nSaygılarımızla,\nBio Verim Satış Ekibi", created_at: "2025-01-01T10:00:00Z" },
+];
+
+export const DEMO_SOCIAL_POSTS = [
+  { id: uuid(601), platform: "linkedin", post_type: "urun_tanitim", title: "Organik Gübre ile Toprak Sağlığı", content: "Toprağınızın sağlığı, ürününüzün kalitesini belirler. Bio Verim sıvı organik gübre ile toprağınızdaki mikrobiyolojik aktiviteyi artırın, veriminizi yüksseltin! 🌱\n\n✅ %100 organik içerik\n✅ Hızlı emilim formülü\n✅ Uzman destek\n\n#OrganikTarım #BioVerim #SürdürülebilirTarım", media_url: null, scheduled_at: null, published_at: null, status: "draft", created_by: null, created_at: "2026-03-20T10:00:00Z" },
+  { id: uuid(602), platform: "instagram", post_type: "kampanya", title: "Bahar Kampanyası %15 İndirim", content: "🌸 Bahar geldi, kampanyamız başladı!\n\nTüm sıvı gübre ürünlerimizde %15 indirim!\n⏰ 1-30 Nisan arası geçerli\n📦 Min. 50L sipariş\n\nHemen DM atın veya 0532 111 2233 numaralı hattı arayın!\n\n#BioVerim #OrganikGübre #BaharKampanyası #Tarım", media_url: null, scheduled_at: "2026-04-01T09:00:00Z", published_at: null, status: "scheduled", created_by: null, created_at: "2026-03-22T10:00:00Z" },
+  { id: uuid(603), platform: "facebook", post_type: "genel", title: "Müşteri Başarı Hikayesi — Ege Tarım", content: "Müşterimiz Ege Tarım A.Ş., Bio Verim sıvı organik gübre kullanmaya başladıktan sonra veriminin %30 arttığını paylaştı! 🎉\n\n\"Toprağımızın yapısı belirgin şekilde iyileşti, sulama suyumuz da azaldı.\" — Ahmet Yılmaz, Ege Tarım\n\nSiz de farkı yaşamak ister misiniz? Ücretsiz numune için bize ulaşın!\n\n#BioVerim #MüşteriMemnuniyeti #OrganikTarım", media_url: null, scheduled_at: null, published_at: "2026-03-15T10:00:00Z", status: "published", created_by: null, created_at: "2026-03-14T14:00:00Z" },
+];
+
+export const DEMO_CONTACT_SEQUENCES = [
+  {
+    id: uuid(701),
+    name: "Yeni Aday Sıcak Takip",
+    description: "İlk temas sonrası yeni adaylar için 5 adımlık yoğun takip planı",
+    total_steps: 5,
+    steps: [
+      { step_no: 1, channel: "whatsapp", message_template: "İlk temas: Kendinizi tanıtın ve ürün kataloğunu gönderin", wait_days: 0 },
+      { step_no: 2, channel: "call", message_template: "Katalog hakkında soru sorun, ihtiyaçlarını öğrenin", wait_days: 3 },
+      { step_no: 3, channel: "email", message_template: "Kişiselleştirilmiş teklif gönderin", wait_days: 7 },
+      { step_no: 4, channel: "whatsapp", message_template: "Teklif hakkında bilgi alın", wait_days: 10 },
+      { step_no: 5, channel: "call", message_template: "Kapanış görüşmesi — karar isteyin", wait_days: 14 },
+    ],
+    created_at: "2025-01-01T10:00:00Z"
+  },
+  {
+    id: uuid(702),
+    name: "Aylık Müşteri Bakım",
+    description: "Aktif müşterilerle düzenli ilişki sürdürme planı",
+    total_steps: 3,
+    steps: [
+      { step_no: 1, channel: "whatsapp", message_template: "Aylık selamlama ve ürün güncellemesi paylaşın", wait_days: 0 },
+      { step_no: 2, channel: "call", message_template: "Memnuniyet kontrolü ve yeni ihtiyaç tespiti", wait_days: 15 },
+      { step_no: 3, channel: "email", message_template: "Aylık kampanya/indirim duyurusu gönderin", wait_days: 25 },
+    ],
+    created_at: "2025-01-01T10:00:00Z"
+  },
+  {
+    id: uuid(703),
+    name: "Kampanya Duyurusu",
+    description: "Sezonluk kampanyaları duyurmak için 3 adımlı plan",
+    total_steps: 3,
+    steps: [
+      { step_no: 1, channel: "email", message_template: "Kampanya e-postasını gönderin", wait_days: 0 },
+      { step_no: 2, channel: "whatsapp", message_template: "WhatsApp ile kampanya hatırlatması yapın", wait_days: 7 },
+      { step_no: 3, channel: "call", message_template: "Kampanya son günü arayın", wait_days: 13 },
+    ],
+    created_at: "2025-01-01T10:00:00Z"
+  },
+  {
+    id: uuid(704),
+    name: "Kayıp Müşteri Geri Kazanım",
+    description: "6+ ay sipariş vermeyen müşterileri geri kazanma planı",
+    total_steps: 4,
+    steps: [
+      { step_no: 1, channel: "email", message_template: "Özlemişsiniz mesajı + özel indirim teklifi", wait_days: 0 },
+      { step_no: 2, channel: "whatsapp", message_template: "Kişisel hatırlatma ve ürün yenilikleri", wait_days: 14 },
+      { step_no: 3, channel: "call", message_template: "Neden sipariş vermediklerini öğrenin", wait_days: 21 },
+      { step_no: 4, channel: "email", message_template: "Son fırsat: Ekstra indirim teklifi", wait_days: 30 },
+    ],
+    created_at: "2025-01-01T10:00:00Z"
+  },
+];
+
+export const DEMO_CUSTOMER_SEQUENCES = [
+  {
+    id: uuid(801),
+    customer_id: uuid(4),
+    sequence_id: uuid(701),
+    started_at: "2026-03-20T10:00:00Z",
+    current_step: 2,
+    status: "active",
+    next_contact_at: "2026-03-23T10:00:00Z",
+    created_by: null,
+    created_at: "2026-03-20T10:00:00Z",
+  },
+  {
+    id: uuid(802),
+    customer_id: uuid(1),
+    sequence_id: uuid(702),
+    started_at: "2026-03-01T10:00:00Z",
+    current_step: 1,
+    status: "active",
+    next_contact_at: "2026-04-01T10:00:00Z",
+    created_by: null,
+    created_at: "2026-03-01T10:00:00Z",
+  },
+];
+
 export function isDemoMode(): boolean {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   return !url || url.includes("placeholder") || !url.startsWith("https://");

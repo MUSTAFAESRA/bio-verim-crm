@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { Plus, Receipt, TrendingUp, TrendingDown, AlertCircle, ArrowRight } from "lucide-react";
+import { Plus, Receipt, TrendingUp, TrendingDown, AlertCircle, ArrowRight, Truck, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -34,6 +34,7 @@ export default async function FinansPage() {
     { data: monthPurchasesRaw },
     { data: overdueInvoices },
     { data: topDebtorsRaw },
+    { data: allPaymentsRaw },
   ] = await Promise.all([
     supabase
       .from("invoices")
@@ -62,6 +63,9 @@ export default async function FinansPage() {
       .gt("balance_due", 0)
       .order("balance_due", { ascending: false })
       .limit(5),
+    supabase
+      .from("payments")
+      .select("amount, invoices(invoice_type)"),
   ]);
   const recentInvoices = recentInvoicesRaw as unknown as InvoiceWithParty[] | null;
   const topDebtors = topDebtorsRaw as unknown as CustomerBalance[] | null;
@@ -70,6 +74,11 @@ export default async function FinansPage() {
 
   const monthRevenue = monthSalesTyped?.reduce((sum, i) => sum + (i.total_amount || 0), 0) ?? 0;
   const monthExpense = monthPurchasesTyped?.reduce((sum, i) => sum + (i.total_amount || 0), 0) ?? 0;
+
+  const allPayments = (allPaymentsRaw ?? []) as Array<{ amount: number; invoices: { invoice_type: string } | null }>;
+  const totalCashIn = allPayments.filter(p => p.invoices?.invoice_type === "sale").reduce((s, p) => s + (p.amount || 0), 0);
+  const totalCashOut = allPayments.filter(p => p.invoices?.invoice_type === "purchase").reduce((s, p) => s + (p.amount || 0), 0);
+  const kasaBakiyesi = totalCashIn - totalCashOut;
 
   return (
     <div className="p-6 space-y-5">
@@ -82,6 +91,12 @@ export default async function FinansPage() {
               Cari Hesaplar
             </Link>
           </Button>
+          <Button asChild variant="outline" size="sm">
+            <Link href="/finans/tedarikci-cari">
+              <Truck className="w-4 h-4" />
+              Tedarikçi Cari
+            </Link>
+          </Button>
           <Button asChild size="sm">
             <Link href="/finans/faturalar/yeni">
               <Plus className="w-4 h-4" />
@@ -92,7 +107,23 @@ export default async function FinansPage() {
       </div>
 
       {/* KPIs */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                <Wallet className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-xs text-slate-500">Kasa Bakiyesi</p>
+                <p className={`text-xl font-bold ${kasaBakiyesi >= 0 ? "text-blue-700" : "text-red-600"}`}>
+                  {formatCurrency(kasaBakiyesi)}
+                </p>
+                <p className="text-xs text-slate-400 mt-0.5">Giren: {formatCurrency(totalCashIn)} · Çıkan: {formatCurrency(totalCashOut)}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">

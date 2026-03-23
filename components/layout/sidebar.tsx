@@ -14,6 +14,7 @@ import {
   Leaf,
   LogOut,
   ChevronRight,
+  ChevronDown,
   Menu,
   X,
 } from "lucide-react";
@@ -21,13 +22,19 @@ import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
+const iletisimSubItems = [
+  { label: "Temas Kayıtları", href: "/iletisim" },
+  { label: "Şablonlar", href: "/iletisim/sablonlar" },
+  { label: "Sekvanslar", href: "/iletisim/sekvanslar" },
+  { label: "Sosyal Medya", href: "/iletisim/sosyal-medya" },
+];
+
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Müşteriler", href: "/musteriler", icon: Users },
   { label: "Fason Üretim", href: "/fason-uretim", icon: Factory },
   { label: "Depo / Envanter", href: "/depo", icon: Warehouse },
   { label: "Finansal Takip", href: "/finans", icon: Receipt },
-  { label: "İletişim", href: "/iletisim", icon: MessageSquare },
   { label: "Müşteri Adayı Bul", href: "/musteri-adayi", icon: UserSearch },
 ];
 
@@ -36,6 +43,9 @@ export function Sidebar() {
   const router = useRouter();
   const supabase = createClient();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const iletisimActive = pathname.startsWith("/iletisim");
+  const [iletisimOpen, setIletisimOpen] = useState(iletisimActive);
 
   async function handleLogout() {
     await supabase.auth.signOut();
@@ -89,6 +99,53 @@ export function Sidebar() {
               </li>
             );
           })}
+
+          {/* İletişim collapsible group */}
+          <li>
+            <button
+              onClick={() => setIletisimOpen(o => !o)}
+              className={cn(
+                "flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                iletisimActive
+                  ? "bg-green-600 text-white"
+                  : "text-slate-300 hover:bg-slate-800 hover:text-white"
+              )}
+            >
+              <MessageSquare className="w-4 h-4 flex-shrink-0" />
+              <span className="flex-1 text-left">İletişim</span>
+              {iletisimOpen
+                ? <ChevronDown className="w-3.5 h-3.5 opacity-70" />
+                : <ChevronRight className="w-3.5 h-3.5 opacity-70" />
+              }
+            </button>
+            {iletisimOpen && (
+              <ul className="mt-1 ml-4 space-y-0.5">
+                {iletisimSubItems.map(sub => {
+                  const isSubActive =
+                    sub.href === "/iletisim"
+                      ? pathname === "/iletisim" || pathname === "/iletisim/"
+                      : pathname.startsWith(sub.href);
+                  return (
+                    <li key={sub.href}>
+                      <Link
+                        href={sub.href}
+                        onClick={() => setMobileOpen(false)}
+                        className={cn(
+                          "flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors",
+                          isSubActive
+                            ? "bg-slate-700 text-white"
+                            : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                        )}
+                      >
+                        <span className="w-1 h-1 rounded-full bg-current flex-shrink-0" />
+                        {sub.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </li>
         </ul>
       </nav>
 

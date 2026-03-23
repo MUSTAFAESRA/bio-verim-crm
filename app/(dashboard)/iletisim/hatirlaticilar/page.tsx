@@ -215,7 +215,7 @@ export default async function HatirlaticilarPage({ searchParams }: PageProps) {
                   </p>
                 </div>
                 {!r.is_completed && (
-                  <form action={async () => { "use server"; await markReminderDone(r.id); }}>
+                  <form action={markReminderDone.bind(null, r.id)}>
                     <Button type="submit" size="sm" variant="outline" className="h-8 text-xs">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       Tamamla

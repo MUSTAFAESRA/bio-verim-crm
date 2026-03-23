@@ -2,7 +2,17 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import type { Database } from "@/types/database";
 import { isDemoMode } from "@/lib/demo-data";
-import { createMockClient } from "@/lib/supabase/mock-client";
+import { createMockClient, hydrateFromDisk } from "@/lib/supabase/mock-client";
+import fs from "fs";
+import path from "path";
+
+// Inject Node.js fs/path into globalThis so mock-client (dual-bundled) can
+// use them without importing directly (which breaks client bundle).
+(globalThis as unknown as Record<string, unknown>).__serverFs = fs;
+(globalThis as unknown as Record<string, unknown>).__serverPath = path;
+
+// First request in this process: load persisted data from disk
+hydrateFromDisk();
 
 export async function createClient() {
   if (isDemoMode()) {

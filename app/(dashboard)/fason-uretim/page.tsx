@@ -13,7 +13,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Trash2, PackagePlus } from "lucide-react";
 import type { ProductionOrder, Supplier, Product } from "@/lib/db-types";
+import { deleteProductionOrder, addDelivery } from "@/actions/production-orders";
 
 type OrderWithRelations = ProductionOrder & {
   suppliers: Pick<Supplier, "company_name"> | null;
@@ -92,6 +94,8 @@ export default async function FasonUretimPage() {
                 <TableHead>Durum</TableHead>
                 <TableHead>Beklenen Tarih</TableHead>
                 <TableHead className="text-right pr-6">Maliyet</TableHead>
+                <TableHead className="min-w-[180px]">Hızlı Stok Girişi</TableHead>
+                <TableHead className="pr-4"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -132,12 +136,40 @@ export default async function FasonUretimPage() {
                       <TableCell className="text-right pr-6 text-sm">
                         {order.unit_cost ? formatCurrency(order.ordered_quantity * order.unit_cost) : "-"}
                       </TableCell>
+                      <TableCell>
+                        {order.status !== "completed" && order.status !== "cancelled" && (
+                          <form action={addDelivery} className="flex items-center gap-1.5">
+                            <input type="hidden" name="production_order_id" value={order.id} />
+                            <input type="hidden" name="delivery_date" value={new Date().toISOString().split("T")[0]} />
+                            <input
+                              name="delivered_quantity"
+                              type="number"
+                              min="0.01"
+                              step="0.01"
+                              placeholder="Miktar"
+                              required
+                              className="w-20 h-7 px-2 rounded border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-green-600"
+                            />
+                            <Button type="submit" size="sm" className="h-7 px-2 text-xs bg-green-600 hover:bg-green-700">
+                              <PackagePlus className="w-3.5 h-3.5 mr-1" />
+                              Ekle
+                            </Button>
+                          </form>
+                        )}
+                      </TableCell>
+                      <TableCell className="pr-4">
+                        <form action={deleteProductionOrder.bind(null, order.id)}>
+                          <Button type="submit" variant="ghost" size="icon" className="h-7 w-7 text-red-400 hover:text-red-600 hover:bg-red-50">
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </Button>
+                        </form>
+                      </TableCell>
                     </TableRow>
                   );
                 })
               ) : (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-10 text-slate-400">
+                  <TableCell colSpan={9} className="text-center py-10 text-slate-400">
                     Aktif sipariş yok.{" "}
                     <Link href="/fason-uretim/yeni" className="text-green-600 hover:underline">
                       Yeni sipariş oluşturun
