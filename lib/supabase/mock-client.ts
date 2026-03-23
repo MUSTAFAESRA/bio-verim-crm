@@ -24,6 +24,8 @@ import {
   DEMO_SOCIAL_POSTS,
   DEMO_CONTACT_SEQUENCES,
   DEMO_CUSTOMER_SEQUENCES,
+  DEMO_QUOTES,
+  DEMO_QUOTE_ITEMS,
 } from "@/lib/demo-data";
 
 // fs and path are injected by server.ts into globalThis to avoid bundler issues.
@@ -99,6 +101,8 @@ if (!global.__DEMO_TABLE_DATA) {
     social_posts: [...DEMO_SOCIAL_POSTS],
     contact_sequences: [...DEMO_CONTACT_SEQUENCES],
     customer_sequences: [...DEMO_CUSTOMER_SEQUENCES],
+    quotes: [...DEMO_QUOTES],
+    quote_items: [...DEMO_QUOTE_ITEMS],
   };
 }
 
@@ -113,6 +117,8 @@ const FK_MAP: Record<string, string> = {
   invoices: "invoice_id",
   contact_sequences: "sequence_id",
   message_templates: "template_id",
+  quote_items: "quote_id",
+  products: "product_id",
 };
 
 class MockQueryBuilder {

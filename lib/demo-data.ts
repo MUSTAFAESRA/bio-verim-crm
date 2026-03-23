@@ -201,6 +201,62 @@ export const DEMO_CUSTOMER_SEQUENCES = [
   },
 ];
 
+export const DEMO_QUOTES = [
+  {
+    id: uuid(901),
+    customer_id: uuid(1),
+    quote_number: "TKL-2025-001",
+    status: "sent",
+    valid_until: "2026-04-15",
+    notes: "Bahar sezonu için hazırlanmış teklif.",
+    subtotal: 19550,
+    tax_rate: 20,
+    tax_amount: 3910,
+    total_amount: 23460,
+    created_by: null,
+    created_at: "2026-03-01T10:00:00Z",
+  },
+  {
+    id: uuid(902),
+    customer_id: uuid(2),
+    quote_number: "TKL-2025-002",
+    status: "draft",
+    valid_until: "2026-04-30",
+    notes: null,
+    subtotal: 13300,
+    tax_rate: 20,
+    tax_amount: 2660,
+    total_amount: 15960,
+    created_by: null,
+    created_at: "2026-03-15T10:00:00Z",
+  },
+  {
+    id: uuid(903),
+    customer_id: uuid(4),
+    quote_number: "TKL-2025-003",
+    status: "accepted",
+    valid_until: "2026-04-10",
+    notes: "Müşteri telefonda onayladı.",
+    subtotal: 15250,
+    tax_rate: 20,
+    tax_amount: 3050,
+    total_amount: 18300,
+    created_by: null,
+    created_at: "2026-03-10T10:00:00Z",
+  },
+];
+
+export const DEMO_QUOTE_ITEMS = [
+  // TKL-2025-001 (Ege Tarım)
+  { id: uuid(951), quote_id: uuid(901), product_id: uuid(202), description: "Bio Verim Sıvı Gübre 5L", quantity: 50, unit_price: 380, discount_percent: 0, line_total: 19000 },
+  { id: uuid(952), quote_id: uuid(901), product_id: uuid(204), description: "Bio Verim Humik Asit 1L", quantity: 5, unit_price: 110, discount_percent: 0, line_total: 550 },
+  // TKL-2025-002 (Antalya Seracılık)
+  { id: uuid(953), quote_id: uuid(902), product_id: uuid(203), description: "Bio Verim Sıvı Gübre 20L", quantity: 10, unit_price: 1400, discount_percent: 5, line_total: 13300 },
+  // TKL-2025-003 (Konya Tahıl)
+  { id: uuid(954), quote_id: uuid(903), product_id: uuid(201), description: "Bio Verim Sıvı Gübre 1L", quantity: 100, unit_price: 85, discount_percent: 10, line_total: 7650 },
+  { id: uuid(955), quote_id: uuid(903), product_id: uuid(202), description: "Bio Verim Sıvı Gübre 5L", quantity: 20, unit_price: 380, discount_percent: 0, line_total: 7600 },
+];
+
 export function isDemoMode(): boolean {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   return !url || url.includes("placeholder") || !url.startsWith("https://");

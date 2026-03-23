@@ -576,6 +576,80 @@ export type Database = {
           { foreignKeyName: "leads_converted_to_fkey"; columns: ["converted_to"]; referencedRelation: "customers"; referencedColumns: ["id"]; }
         ];
       };
+      quotes: {
+        Row: {
+          id: string;
+          customer_id: string;
+          quote_number: string;
+          status: string;
+          valid_until: string | null;
+          notes: string | null;
+          subtotal: number;
+          tax_rate: number;
+          tax_amount: number;
+          total_amount: number;
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          customer_id: string;
+          quote_number: string;
+          status?: string;
+          valid_until?: string | null;
+          notes?: string | null;
+          subtotal?: number;
+          tax_rate?: number;
+          tax_amount?: number;
+          total_amount?: number;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          status?: string;
+          valid_until?: string | null;
+          notes?: string | null;
+          subtotal?: number;
+          tax_rate?: number;
+          tax_amount?: number;
+          total_amount?: number;
+        };
+        Relationships: [
+          { foreignKeyName: "quotes_customer_id_fkey"; columns: ["customer_id"]; referencedRelation: "customers"; referencedColumns: ["id"]; }
+        ];
+      };
+      quote_items: {
+        Row: {
+          id: string;
+          quote_id: string;
+          product_id: string | null;
+          description: string;
+          quantity: number;
+          unit_price: number;
+          discount_percent: number;
+          line_total: number;
+        };
+        Insert: {
+          id?: string;
+          quote_id: string;
+          product_id?: string | null;
+          description: string;
+          quantity: number;
+          unit_price: number;
+          discount_percent?: number;
+          line_total: number;
+        };
+        Update: {
+          description?: string;
+          quantity?: number;
+          unit_price?: number;
+          discount_percent?: number;
+          line_total?: number;
+        };
+        Relationships: [
+          { foreignKeyName: "quote_items_quote_id_fkey"; columns: ["quote_id"]; referencedRelation: "quotes"; referencedColumns: ["id"]; }
+        ];
+      };
       message_templates: {
         Row: {
           id: string;

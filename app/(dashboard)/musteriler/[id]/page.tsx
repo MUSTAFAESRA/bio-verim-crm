@@ -11,6 +11,7 @@ import {
   MessageSquare,
   Receipt,
   Plus,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +25,7 @@ import {
   OUTCOME_LABELS,
   INVOICE_STATUS_LABELS,
   SOURCE_LABELS,
+  QUOTE_STATUS_LABELS,
 } from "@/lib/utils";
 import {
   Table,
@@ -50,7 +52,7 @@ export default async function MusteriDetayPage({ params }: PageProps) {
   const { id } = await params;
   const supabase = await createClient();
 
-  const [{ data: customerRaw }, { data: contactsRaw }, { data: invoicesRaw }, { data: balanceRaw }, { data: paymentsRaw }] =
+  const [{ data: customerRaw }, { data: contactsRaw }, { data: invoicesRaw }, { data: balanceRaw }, { data: paymentsRaw }, { data: quotesRaw }] =
     await Promise.all([
       supabase.from("customers").select("*").eq("id", id).single(),
       supabase
@@ -73,11 +75,20 @@ export default async function MusteriDetayPage({ params }: PageProps) {
         .eq("invoices.customer_id", id)
         .order("payment_date", { ascending: false })
         .limit(20),
+      supabase
+        .from("quotes")
+        .select("*")
+        .eq("customer_id", id)
+        .order("created_at", { ascending: false })
+        .limit(20),
     ]);
   const customer = customerRaw as unknown as Customer | null;
   const contacts = contactsRaw as unknown as ContactLog[] | null;
   const invoices = invoicesRaw as unknown as Invoice[] | null;
   const balance = balanceRaw as unknown as CustomerBalance | null;
+  const quotes = (quotesRaw ?? []) as Array<{
+    id: string; quote_number: string; status: string; total_amount: number; created_at: string; valid_until: string | null;
+  }>;
   const allPayments = (paymentsRaw as unknown as Array<{
     id: string; invoice_id: string; payment_date: string;
     amount: number; payment_method: string | null; reference_no: string | null;
@@ -143,6 +154,12 @@ export default async function MusteriDetayPage({ params }: PageProps) {
             <Link href={`/musteriler/${id}/duzenle`}>
               <Pencil className="w-4 h-4" />
               Düzenle
+            </Link>
+          </Button>
+          <Button asChild variant="outline" size="sm">
+            <Link href={`/musteriler/${id}/teklif/yeni`}>
+              <FileText className="w-4 h-4" />
+              Teklif Oluştur
             </Link>
           </Button>
           <Button asChild size="sm">
@@ -304,6 +321,59 @@ export default async function MusteriDetayPage({ params }: PageProps) {
                 <p className="text-sm text-slate-400 text-center py-6">
                   Henüz iletişim kaydı bulunmuyor
                 </p>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Quotes */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-amber-500" />
+                  Teklifler ({quotes.length})
+                </CardTitle>
+                <Button asChild variant="outline" size="sm" className="h-7 text-xs">
+                  <Link href={`/musteriler/${id}/teklif/yeni`}>
+                    <Plus className="w-3 h-3" /> Teklif Oluştur
+                  </Link>
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {quotes.length > 0 ? (
+                <div className="space-y-2">
+                  {quotes.map(q => (
+                    <Link
+                      key={q.id}
+                      href={`/musteriler/${id}/teklif/${q.id}`}
+                      className="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors text-sm"
+                    >
+                      <div>
+                        <span className="font-medium text-slate-700">{q.quote_number}</span>
+                        <span className="text-slate-400 text-xs ml-2">{formatDate(q.created_at)}</span>
+                        {q.valid_until && (
+                          <span className="text-slate-400 text-xs ml-2">· Geçerli: {formatDate(q.valid_until)}</span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Badge
+                          variant={
+                            q.status === "accepted" ? "success" :
+                            q.status === "rejected" ? "destructive" :
+                            q.status === "sent" ? "warning" : "secondary"
+                          }
+                          className="text-xs"
+                        >
+                          {QUOTE_STATUS_LABELS[q.status] ?? q.status}
+                        </Badge>
+                        <span className="font-semibold">{formatCurrency(q.total_amount)}</span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-slate-400 text-center py-6">Henüz teklif bulunmuyor</p>
               )}
             </CardContent>
           </Card>

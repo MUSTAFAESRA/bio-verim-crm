@@ -103,6 +103,14 @@ export const SEQUENCE_STATUS_LABELS: Record<string, string> = {
   completed: "Tamamlandı",
 };
 
+export const QUOTE_STATUS_LABELS: Record<string, string> = {
+  draft: "Taslak",
+  sent: "Gönderildi",
+  accepted: "Kabul Edildi",
+  rejected: "Reddedildi",
+  expired: "Süresi Doldu",
+};
+
 export const OUTCOME_LABELS: Record<string, string> = {
   interested: "İlgili",
   not_interested: "İlgisiz",
