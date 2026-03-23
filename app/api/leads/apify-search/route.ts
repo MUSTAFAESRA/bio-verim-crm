@@ -30,8 +30,8 @@ export async function GET(request: NextRequest) {
 
   const apifyToken = process.env.APIFY_TOKEN;
 
-  if (!apifyToken) {
-    return NextResponse.json({ error: "APIFY_TOKEN ortam değişkeni ayarlanmamış" }, { status: 500 });
+  if (!apifyToken || apifyToken.startsWith("your_") || apifyToken === "") {
+    return NextResponse.json({ error: "NO_TOKEN" }, { status: 401 });
   }
 
   const searchQuery = `${keyword} ${city} Türkiye`;

@@ -63,6 +63,7 @@ export default function ApifyAramaSayfasi() {
   const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
   const [addingId, setAddingId] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [noToken, setNoToken] = useState(false);
   const [searchedCity, setSearchedCity] = useState("");
 
   const activeKeyword = customKeyword.trim() || keyword;
@@ -72,6 +73,7 @@ export default function ApifyAramaSayfasi() {
     if (!city) return;
     setLoading(true);
     setError("");
+    setNoToken(false);
     setResults([]);
     setSearchedCity(city);
 
@@ -83,6 +85,10 @@ export default function ApifyAramaSayfasi() {
       });
       const res = await fetch(`/api/leads/apify-search?${params}`);
       const data = await res.json();
+      if (res.status === 401 && data.error === "NO_TOKEN") {
+        setNoToken(true);
+        return;
+      }
       if (!res.ok) throw new Error(data.error || "Arama başarısız");
       setResults(data.results || []);
     } catch (err: unknown) {
@@ -227,6 +233,69 @@ export default function ApifyAramaSayfasi() {
           </Button>
         </form>
       </div>
+
+      {/* Token kurulum rehberi */}
+      {noToken && (
+        <div className="bg-amber-50 border border-amber-300 rounded-xl p-6 space-y-4">
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+              <span className="text-amber-600 font-bold text-sm">!</span>
+            </div>
+            <div>
+              <p className="font-semibold text-amber-800">Apify Token Gerekli</p>
+              <p className="text-sm text-amber-700 mt-0.5">
+                Google Maps araması için ücretsiz Apify hesabı ve API token gerekiyor.
+              </p>
+            </div>
+          </div>
+
+          <ol className="space-y-3 text-sm text-slate-700 pl-2">
+            <li className="flex gap-3">
+              <span className="w-6 h-6 rounded-full bg-green-600 text-white text-xs flex items-center justify-center flex-shrink-0 font-bold">1</span>
+              <span>
+                <strong>apify.com</strong> adresine git →{" "}
+                <strong>Sign Up</strong> (Google ile ücretsiz kayıt)
+              </span>
+            </li>
+            <li className="flex gap-3">
+              <span className="w-6 h-6 rounded-full bg-green-600 text-white text-xs flex items-center justify-center flex-shrink-0 font-bold">2</span>
+              <span>
+                Sağ üstten <strong>Settings → Integrations → API tokens → Create token</strong>
+              </span>
+            </li>
+            <li className="flex gap-3">
+              <span className="w-6 h-6 rounded-full bg-green-600 text-white text-xs flex items-center justify-center flex-shrink-0 font-bold">3</span>
+              <span>
+                Token&apos;ı kopyala (<code className="bg-slate-100 px-1 rounded text-xs">apify_api_XXXXX...</code>)
+              </span>
+            </li>
+            <li className="flex gap-3">
+              <span className="w-6 h-6 rounded-full bg-green-600 text-white text-xs flex items-center justify-center flex-shrink-0 font-bold">4</span>
+              <span>
+                Şu dosyayı aç ve token&apos;ı yapıştır:
+                <br />
+                <code className="bg-slate-100 px-2 py-0.5 rounded text-xs block mt-1 text-slate-600">
+                  C:\Users\Mustafa\Desktop\YAPAY ZEKA\BİO VERİM CRM\bio-verim-crm\.env.local
+                </code>
+                <code className="bg-slate-100 px-2 py-0.5 rounded text-xs block mt-1 text-green-700">
+                  APIFY_TOKEN=apify_api_BURAYA_YAPISTIR
+                </code>
+              </span>
+            </li>
+            <li className="flex gap-3">
+              <span className="w-6 h-6 rounded-full bg-green-600 text-white text-xs flex items-center justify-center flex-shrink-0 font-bold">5</span>
+              <span>
+                Terminalde sunucuyu yeniden başlat: <code className="bg-slate-100 px-1 rounded text-xs">Ctrl+C</code> ardından{" "}
+                <code className="bg-slate-100 px-1 rounded text-xs">npm run dev</code>
+              </span>
+            </li>
+          </ol>
+
+          <p className="text-xs text-slate-500 pl-2">
+            💡 Ücretsiz plan: Aylık $5 kullanım kredisi — 20 sonuçluk arama ≈ $0.02, yüzlerce arama ücretsiz.
+          </p>
+        </div>
+      )}
 
       {/* Hata */}
       {error && (
