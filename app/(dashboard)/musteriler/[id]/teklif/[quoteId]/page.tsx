@@ -159,8 +159,16 @@ export default async function TeklifDetayPage({ params }: PageProps) {
             <div className="flex justify-between items-start gap-4">
               {/* Sol: Şirket bilgileri */}
               <div>
-                <h2 className="text-2xl font-bold tracking-wide">TEKLİF</h2>
-                <p className="text-green-100 text-xs mt-0.5 mb-3">{COMPANY.tagline}</p>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="bg-white rounded-lg p-1 flex-shrink-0">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/logo.jpeg" alt="BioVerim Logo" className="w-12 h-12 object-contain" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold tracking-wide">TEKLİF</h2>
+                    <p className="text-green-100 text-xs">{COMPANY.tagline}</p>
+                  </div>
+                </div>
                 <p className="font-semibold text-base">{COMPANY.name}</p>
                 <p className="text-green-100 text-xs mt-1">{COMPANY.address}</p>
                 <p className="text-green-100 text-xs">{COMPANY.city}</p>

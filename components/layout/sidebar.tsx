@@ -56,11 +56,12 @@ export function Sidebar() {
     <>
       {/* Logo */}
       <div className="flex items-center gap-3 px-6 py-5 border-b border-slate-700">
-        <div className="w-9 h-9 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
-          <Leaf className="w-5 h-5 text-white" />
+        <div className="w-10 h-10 flex-shrink-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.jpeg" alt="BioVerim Logo" className="w-10 h-10 object-contain rounded" />
         </div>
         <div>
-          <p className="font-bold text-sm leading-tight">Bio Verim</p>
+          <p className="font-bold text-sm leading-tight">BioVerim</p>
           <p className="text-xs text-slate-400 leading-tight">CRM Sistemi</p>
         </div>
         {/* Mobile close button */}
