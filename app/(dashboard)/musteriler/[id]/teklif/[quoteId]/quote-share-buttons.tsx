@@ -28,16 +28,16 @@ export default function QuoteShareButtons({
     `Geçerlilik Tarihi: ${validUntil}\n\n` +
     `Teklifimiz hakkında sorularınız için bizimle iletişime geçebilirsiniz.\n\n` +
     `Saygılarımızla,\n` +
-    `Bio Verim Organik Gübre\n` +
-    `Tel: 0850 000 00 00\n` +
-    `E-posta: info@bioverim.com.tr\n` +
-    `www.bioverim.com.tr`;
+    `Bioverim Gübre ve Tarım Ürünleri A.Ş.\n` +
+    `Tel: 0532 152 50 23\n` +
+    `E-posta: info@gubano.com\n` +
+    `www.gubano.com.tr`;
 
   const whatsappText =
     `Sayın ${customerName}, ${quoteNumber} numaralı teklifimizi bilgilerinize sunarız. ` +
     `Genel Toplam: ${totalAmount}. ` +
     `${validUntil} tarihine kadar geçerlidir. ` +
-    `Saygılarımızla, Bio Verim Organik Gübre`;
+    `Saygılarımızla, Bioverim Gübre ve Tarım Ürünleri A.Ş.`;
 
   const digits = customerPhone?.replace(/\D/g, "") ?? "";
   const waPhone = digits.startsWith("0") ? "90" + digits.slice(1) : digits.startsWith("90") ? digits : "90" + digits;

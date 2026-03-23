@@ -26,15 +26,15 @@ const STATUS_VARIANT: Record<string, "secondary" | "warning" | "success" | "dest
 
 // Bio Verim şirket bilgileri
 const COMPANY = {
-  name: "Bio Verim Organik Gübre",
-  tagline: "Doğal Tarımın Gücü",
-  address: "Organize Sanayi Bölgesi, Tarım Mah. 5. Cadde No:12",
-  city: "Konya",
-  phone: "0850 000 00 00",
-  email: "info@bioverim.com.tr",
-  website: "www.bioverim.com.tr",
-  taxNumber: "1234567890",
-  taxOffice: "Konya Vergi Dairesi",
+  name: "Bioverim Gübre ve Tarım Ürünleri A.Ş.",
+  tagline: "Hayvansal ve Bitkisel Gübre Toptan Ticareti",
+  address: "75.Yıl Mah. 11235 Sk. Yunus Emre Kobi Sanayi Sitesi B-3 Blok No:50",
+  city: "Odunpazarı / Eskişehir",
+  phone: "0532 152 50 23",
+  email: "info@gubano.com",
+  website: "gubano.com.tr",
+  taxNumber: "1761105996",
+  taxOffice: "Eskişehir Vergi Dairesi",
 };
 
 interface PageProps {
