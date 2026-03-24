@@ -64,7 +64,7 @@ export default async function FinansPage() {
       .order("balance_due", { ascending: false })
       .limit(5),
     supabase
-      .from("payments")
+      .from("bv_payments")
       .select("amount, invoices(invoice_type)"),
   ]);
   const recentInvoices = recentInvoicesRaw as unknown as InvoiceWithParty[] | null;

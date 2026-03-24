@@ -34,7 +34,7 @@ export default async function FaturaDetayPage({ params }: PageProps) {
       .eq("id", id)
       .single(),
     supabase.from("invoice_items").select("*, products(name, unit)").eq("invoice_id", id),
-    supabase.from("payments").select("*").eq("invoice_id", id).order("payment_date", { ascending: false }),
+    supabase.from("bv_payments").select("*").eq("invoice_id", id).order("payment_date", { ascending: false }),
     supabase.from("payment_plans").select("*").eq("invoice_id", id).order("installment_no"),
   ]);
 

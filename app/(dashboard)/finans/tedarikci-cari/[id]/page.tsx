@@ -35,7 +35,7 @@ export default async function TedarikciCariDetayPage({ params }: PageProps) {
 
   const invoiceIds = invoices.map(i => i.id);
   const { data: paymentsRaw } = invoiceIds.length > 0
-    ? await supabase.from("payments").select("*, invoices(invoice_number)").in("invoice_id", invoiceIds).order("payment_date")
+    ? await supabase.from("bv_payments").select("*, invoices(invoice_number)").in("invoice_id", invoiceIds).order("payment_date")
     : { data: [] };
 
   const payments = (paymentsRaw ?? []) as Array<{

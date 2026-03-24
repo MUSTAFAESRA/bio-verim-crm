@@ -23,9 +23,6 @@ export async function createInvoice(formData: FormData) {
   const seq = String((count || 0) + 1).padStart(4, "0");
   const invoiceNumber = `${prefix}-${year}-${seq}`;
 
-  const taxAmount = subtotal * taxRate / 100;
-  const totalAmount = subtotal + taxAmount;
-
   const invoiceData = {
     invoice_number: invoiceNumber,
     invoice_type: invoiceType,
@@ -35,8 +32,6 @@ export async function createInvoice(formData: FormData) {
     due_date: (formData.get("due_date") as string) || null,
     subtotal,
     tax_rate: taxRate,
-    tax_amount: taxAmount,
-    total_amount: totalAmount,
     paid_amount: 0,
     status: "draft" as const,
     notes: (formData.get("notes") as string) || null,
@@ -131,7 +126,7 @@ export async function addPayment(formData: FormData) {
     created_by: user.id,
   };
 
-  const { error: payError } = await supabase.from("payments").insert(paymentData);
+  const { error: payError } = await supabase.from("bv_payments").insert(paymentData);
   if (payError) throw new Error(payError.message);
 
   // Update invoice paid_amount and status

@@ -71,7 +71,7 @@ export default async function MusteriDetayPage({ params }: PageProps) {
         .limit(20),
       supabase.from("customer_balance").select("*").eq("id", id).single(),
       supabase
-        .from("payments")
+        .from("bv_payments")
         .select("*, invoices(invoice_number, customer_id)")
         .eq("invoices.customer_id", id)
         .order("payment_date", { ascending: false })

@@ -88,7 +88,7 @@ if (!global.__DEMO_TABLE_DATA) {
     products: [...DEMO_PRODUCTS],
     invoices: [...DEMO_INVOICES],
     invoice_items: [...DEMO_INVOICE_ITEMS],
-    payments: [...DEMO_PAYMENTS],
+    bv_payments: [...DEMO_PAYMENTS],
     payment_plans: [...DEMO_PAYMENT_PLANS],
     contact_logs: [...DEMO_CONTACT_LOGS],
     reminders: [...DEMO_REMINDERS],
@@ -402,7 +402,7 @@ class MockDeleteBuilder {
 function computeCustomerBalance(): any[] {
   const customers = TABLE_DATA["customers"] || [];
   const invoices = TABLE_DATA["invoices"] || [];
-  const payments = TABLE_DATA["payments"] || [];
+  const payments = TABLE_DATA["bv_payments"] || [];
   return customers.map((c: any) => {
     const saleInvoices = invoices.filter((i: any) => i.customer_id === c.id && i.invoice_type === "sale");
     const invoiceIds = saleInvoices.map((i: any) => i.id);
@@ -424,7 +424,7 @@ function computeCustomerBalance(): any[] {
 function computeSupplierBalance(): any[] {
   const suppliers = TABLE_DATA["suppliers"] || [];
   const invoices = TABLE_DATA["invoices"] || [];
-  const payments = TABLE_DATA["payments"] || [];
+  const payments = TABLE_DATA["bv_payments"] || [];
   return suppliers.map((s: any) => {
     const purchaseInvoices = invoices.filter((i: any) => i.supplier_id === s.id && i.invoice_type === "purchase");
     const invoiceIds = purchaseInvoices.map((i: any) => i.id);

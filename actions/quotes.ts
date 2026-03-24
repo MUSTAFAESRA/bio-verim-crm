@@ -12,8 +12,6 @@ export async function createQuote(formData: FormData) {
   const customerId = formData.get("customer_id") as string;
   const taxRate = Number(formData.get("tax_rate") ?? 20);
   const subtotal = Number(formData.get("subtotal") ?? 0);
-  const taxAmount = subtotal * taxRate / 100;
-  const totalAmount = subtotal + taxAmount;
   const itemsJson = formData.get("items_json") as string;
 
   // Generate quote number
@@ -32,7 +30,7 @@ export async function createQuote(formData: FormData) {
   }
   const quoteNumber = `TKL-${year}-${String(seq).padStart(3, "0")}`;
 
-  const { data: quote } = await supabase.from("quotes").insert({
+  const { data: quote, error: quoteError } = await supabase.from("quotes").insert({
     customer_id: customerId,
     quote_number: quoteNumber,
     status: "draft",
@@ -40,11 +38,13 @@ export async function createQuote(formData: FormData) {
     notes: (formData.get("notes") as string) || null,
     subtotal,
     tax_rate: taxRate,
-    tax_amount: taxAmount,
-    total_amount: totalAmount,
     created_by: user.id,
     created_at: now.toISOString(),
   }).select("id").single();
+
+  if (quoteError || !quote) {
+    redirect(`/musteriler/${customerId}`);
+  }
 
   if (quote && itemsJson) {
     const items = JSON.parse(itemsJson) as Array<{
