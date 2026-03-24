@@ -26,6 +26,7 @@ import {
   DEMO_CUSTOMER_SEQUENCES,
   DEMO_QUOTES,
   DEMO_QUOTE_ITEMS,
+  DEMO_INFLUENCER_CONTACTS,
 } from "@/lib/demo-data";
 
 // fs and path are injected by server.ts into globalThis to avoid bundler issues.
@@ -103,7 +104,13 @@ if (!global.__DEMO_TABLE_DATA) {
     customer_sequences: [...DEMO_CUSTOMER_SEQUENCES],
     quotes: [...DEMO_QUOTES],
     quote_items: [...DEMO_QUOTE_ITEMS],
+    influencer_contacts: [...DEMO_INFLUENCER_CONTACTS],
   };
+}
+
+// Backfill tables added after initial hydration (hot-reload safe)
+if (!global.__DEMO_TABLE_DATA!.influencer_contacts) {
+  global.__DEMO_TABLE_DATA!.influencer_contacts = [...DEMO_INFLUENCER_CONTACTS];
 }
 
 const TABLE_DATA: Record<string, any[]> = global.__DEMO_TABLE_DATA;

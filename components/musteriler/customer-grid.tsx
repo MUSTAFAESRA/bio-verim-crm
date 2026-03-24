@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
 import { bulkUpdateSegment } from "@/actions/customers";
+import { HeatScoreBadge, parseHeatScoreFromNotes } from "@/components/musteriler/heat-score-badge";
 
 const SEGMENT_CONFIG = {
   lead: { label: "Aday", variant: "warning" as const },
@@ -24,6 +25,7 @@ type Customer = {
   district: string | null;
   segment: "lead" | "active" | "passive";
   created_at: string;
+  notes?: string | null;
 };
 
 interface CustomerGridProps {
@@ -181,8 +183,13 @@ export function CustomerGrid({ customers }: CustomerGridProps) {
                     )}
                   </div>
 
-                  <div className="mt-3 pt-3 border-t border-slate-100 text-xs text-slate-400">
-                    Eklenme: {formatDate(customer.created_at)}
+                  <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between">
+                    <span className="text-xs text-slate-400">Eklenme: {formatDate(customer.created_at)}</span>
+                    <HeatScoreBadge
+                      customerId={customer.id}
+                      customerName={customer.company_name}
+                      cachedScore={parseHeatScoreFromNotes(customer.notes)}
+                    />
                   </div>
                 </Link>
               </div>

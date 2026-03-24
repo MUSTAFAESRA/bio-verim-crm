@@ -11,12 +11,19 @@ import {
   Receipt,
   MessageSquare,
   UserSearch,
-  Leaf,
   LogOut,
   ChevronRight,
   ChevronDown,
   Menu,
   X,
+  Globe,
+  Linkedin,
+  Instagram,
+  Facebook,
+  Star,
+  Settings,
+  MessageCircle,
+  Mail,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
@@ -29,13 +36,27 @@ const iletisimSubItems = [
   { label: "Sosyal Medya", href: "/iletisim/sosyal-medya" },
 ];
 
+const musteriAdayiSubItems = [
+  { label: "Tüm Adaylar", href: "/musteri-adayi", icon: UserSearch },
+  { label: "Google Maps", href: "/musteri-adayi/bul", icon: Globe },
+  { label: "LinkedIn", href: "/musteri-adayi/linkedin", icon: Linkedin },
+  { label: "Instagram", href: "/musteri-adayi/instagram", icon: Instagram },
+  { label: "Facebook", href: "/musteri-adayi/facebook", icon: Facebook },
+  { label: "KOL / Önemli Kişi", href: "/musteri-adayi/kol-takip", icon: Star },
+];
+
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Müşteriler", href: "/musteriler", icon: Users },
   { label: "Fason Üretim", href: "/fason-uretim", icon: Factory },
   { label: "Depo / Envanter", href: "/depo", icon: Warehouse },
   { label: "Finansal Takip", href: "/finans", icon: Receipt },
-  { label: "Müşteri Adayı Bul", href: "/musteri-adayi", icon: UserSearch },
+];
+
+const ayarlarSubItems = [
+  { label: "WhatsApp", href: "/ayarlar/whatsapp", icon: MessageCircle },
+  { label: "Facebook & Instagram", href: "/ayarlar/facebook", icon: Facebook },
+  { label: "E-posta", href: "/ayarlar/email", icon: Mail },
 ];
 
 export function Sidebar() {
@@ -46,6 +67,12 @@ export function Sidebar() {
 
   const iletisimActive = pathname.startsWith("/iletisim");
   const [iletisimOpen, setIletisimOpen] = useState(iletisimActive);
+
+  const musteriAdayiActive = pathname.startsWith("/musteri-adayi");
+  const [musteriAdayiOpen, setMusteriAdayiOpen] = useState(musteriAdayiActive);
+
+  const ayarlarActive = pathname.startsWith("/ayarlar");
+  const [ayarlarOpen, setAyarlarOpen] = useState(ayarlarActive);
 
   async function handleLogout() {
     await supabase.auth.signOut();
@@ -101,6 +128,53 @@ export function Sidebar() {
             );
           })}
 
+          {/* Müşteri Adayı collapsible group */}
+          <li>
+            <button
+              onClick={() => setMusteriAdayiOpen(o => !o)}
+              className={cn(
+                "flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                musteriAdayiActive
+                  ? "bg-green-600 text-white"
+                  : "text-slate-300 hover:bg-slate-800 hover:text-white"
+              )}
+            >
+              <UserSearch className="w-4 h-4 flex-shrink-0" />
+              <span className="flex-1 text-left">Müşteri Adayı</span>
+              {musteriAdayiOpen
+                ? <ChevronDown className="w-3.5 h-3.5 opacity-70" />
+                : <ChevronRight className="w-3.5 h-3.5 opacity-70" />
+              }
+            </button>
+            {musteriAdayiOpen && (
+              <ul className="mt-1 ml-4 space-y-0.5">
+                {musteriAdayiSubItems.map(sub => {
+                  const isSubActive =
+                    sub.href === "/musteri-adayi"
+                      ? pathname === "/musteri-adayi" || pathname === "/musteri-adayi/"
+                      : pathname.startsWith(sub.href);
+                  return (
+                    <li key={sub.href}>
+                      <Link
+                        href={sub.href}
+                        onClick={() => setMobileOpen(false)}
+                        className={cn(
+                          "flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors",
+                          isSubActive
+                            ? "bg-slate-700 text-white"
+                            : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                        )}
+                      >
+                        <sub.icon className="w-3 h-3 flex-shrink-0" />
+                        {sub.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </li>
+
           {/* İletişim collapsible group */}
           <li>
             <button
@@ -150,8 +224,49 @@ export function Sidebar() {
         </ul>
       </nav>
 
-      {/* Logout */}
-      <div className="px-3 py-4 border-t border-slate-700">
+      {/* Settings + Logout */}
+      <div className="px-3 py-4 border-t border-slate-700 space-y-1">
+        {/* Ayarlar collapsible */}
+        <button
+          onClick={() => setAyarlarOpen(o => !o)}
+          className={cn(
+            "flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+            ayarlarActive
+              ? "bg-green-600 text-white"
+              : "text-slate-300 hover:bg-slate-800 hover:text-white"
+          )}
+        >
+          <Settings className="w-4 h-4 flex-shrink-0" />
+          <span className="flex-1 text-left">Ayarlar</span>
+          {ayarlarOpen
+            ? <ChevronDown className="w-3.5 h-3.5 opacity-70" />
+            : <ChevronRight className="w-3.5 h-3.5 opacity-70" />
+          }
+        </button>
+        {ayarlarOpen && (
+          <ul className="mt-1 ml-4 space-y-0.5">
+            {ayarlarSubItems.map(sub => {
+              const isSubActive = pathname.startsWith(sub.href);
+              return (
+                <li key={sub.href}>
+                  <Link
+                    href={sub.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={cn(
+                      "flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors",
+                      isSubActive
+                        ? "bg-slate-700 text-white"
+                        : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                    )}
+                  >
+                    <sub.icon className="w-3 h-3 flex-shrink-0" />
+                    {sub.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        )}
         <button
           onClick={handleLogout}
           className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"

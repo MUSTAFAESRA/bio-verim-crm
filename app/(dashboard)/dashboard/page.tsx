@@ -8,6 +8,7 @@ import {
   Plus,
   ArrowRight,
   Receipt,
+  MessageCircle,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,10 +16,19 @@ import { Badge } from "@/components/ui/badge";
 import { formatCurrency, formatDate, SEGMENT_LABELS, CONTACT_TYPE_LABELS } from "@/lib/utils";
 import Link from "next/link";
 import type { LowStockProduct } from "@/lib/db-types";
+import { DailyBriefingWidget } from "@/components/dashboard/daily-briefing-widget";
 
 type OverdueInvoice = { id: string; invoice_number: string; customer_id: string | null; total_amount: number; due_date: string };
 type TodayReminder = { id: string; title: string; remind_at: string; customer_id: string | null };
 type RecentContact = { id: string; customer_id: string; contact_type: string; contacted_at: string; outcome: string | null };
+type DueWhatsApp = {
+  id: string;
+  customer_id: string;
+  current_step: number;
+  next_contact_at: string;
+  contact_sequences: { name: string; steps: Array<{ step_no: number; channel: string; message_template: string }> } | null;
+  customers: { company_name: string; phone: string | null } | null;
+};
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -32,6 +42,7 @@ export default async function DashboardPage() {
     { data: todayRemindersRaw },
     { data: recentContactsRaw },
     { data: monthInvoicesRaw },
+    { data: dueSequencesRaw },
   ] = await Promise.all([
     supabase
       .from("customers")
@@ -67,6 +78,13 @@ export default async function DashboardPage() {
       .eq("invoice_type", "sale")
       .gte("invoice_date", new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split("T")[0])
       .neq("status", "cancelled"),
+    supabase
+      .from("customer_sequences")
+      .select("id, customer_id, current_step, next_contact_at, contact_sequences(name, steps), customers(company_name, phone)")
+      .eq("status", "active")
+      .lte("next_contact_at", new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString())
+      .order("next_contact_at", { ascending: true })
+      .limit(10),
   ]);
   const overdueInvoices = overdueInvoicesRaw as unknown as OverdueInvoice[] | null;
   const lowStock = lowStockRaw as unknown as LowStockProduct[] | null;
@@ -76,6 +94,17 @@ export default async function DashboardPage() {
 
   const monthRevenue = monthInvoices?.reduce((sum, inv) => sum + (inv.total_amount || 0), 0) ?? 0;
   const overdueTotal = overdueInvoices?.reduce((sum, inv) => sum + (inv.total_amount || 0), 0) ?? 0;
+
+  // Bugün gönderilecek adımları kanala göre ayır
+  const dueSequences = dueSequencesRaw as unknown as DueWhatsApp[] | null;
+  const dueWhatsApp = (dueSequences ?? []).filter(cs => {
+    const stepData = cs.contact_sequences?.steps?.find(s => s.step_no === cs.current_step);
+    return stepData?.channel === "whatsapp";
+  });
+  const dueSocial = (dueSequences ?? []).filter(cs => {
+    const stepData = cs.contact_sequences?.steps?.find(s => s.step_no === cs.current_step);
+    return ["instagram", "linkedin_dm", "facebook_dm"].includes(stepData?.channel ?? "");
+  });
 
   return (
     <div className="p-6 space-y-6">
@@ -102,6 +131,9 @@ export default async function DashboardPage() {
           </Button>
         </div>
       </div>
+
+      {/* AI Günlük Briefing */}
+      <DailyBriefingWidget />
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -274,6 +306,131 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Bugün Gönderilecek WhatsApp */}
+      {dueWhatsApp.length > 0 && (
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                <MessageCircle className="w-4 h-4 text-green-600" />
+                Bugün Gönderilecek WhatsApp
+                <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full">
+                  {dueWhatsApp.length}
+                </span>
+              </CardTitle>
+              <Button asChild variant="ghost" size="sm" className="text-xs h-7">
+                <Link href="/iletisim/sekvanslar">
+                  Sekvanslar <ArrowRight className="w-3 h-3 ml-1" />
+                </Link>
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {dueWhatsApp.map((cs) => {
+                const stepData = cs.contact_sequences?.steps?.find(s => s.step_no === cs.current_step);
+                const phone = cs.customers?.phone ?? "";
+                const customerName = cs.customers?.company_name ?? "Müşteri";
+                const message = (stepData?.message_template ?? "")
+                  .replace(/\{\{musteri_adi\}\}/g, customerName)
+                  .replace(/\{\{urun_adi\}\}/g, "Bio Verim Sıvı Gübre")
+                  .replace(/\{\{tarih\}\}/g, new Date().toLocaleDateString("tr-TR"))
+                  .replace(/\{\{fiyat\}\}/g, "fiyat için arayın");
+                const waPhone = phone.replace(/\D/g, "").replace(/^0/, "90");
+                const waLink = phone
+                  ? `https://wa.me/${waPhone}?text=${encodeURIComponent(message)}`
+                  : null;
+
+                return (
+                  <div key={cs.id} className="flex items-center justify-between p-3 bg-green-50 rounded-xl border border-green-100">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium text-slate-800 text-sm truncate">{customerName}</p>
+                      <p className="text-xs text-slate-500 truncate">
+                        {cs.contact_sequences?.name} · Adım {cs.current_step}
+                      </p>
+                      {phone && <p className="text-xs text-green-600">{phone}</p>}
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0 ml-3">
+                      <Link href={`/iletisim/sekvanslar/${cs.id}`}>
+                        <Button size="sm" variant="outline" className="text-xs h-7 px-2">
+                          Detay
+                        </Button>
+                      </Link>
+                      {waLink ? (
+                        <a href={waLink} target="_blank" rel="noopener noreferrer">
+                          <Button size="sm" className="text-xs h-7 px-2 bg-green-600 hover:bg-green-700 gap-1">
+                            <MessageCircle className="w-3 h-3" /> Gönder
+                          </Button>
+                        </a>
+                      ) : (
+                        <Button size="sm" disabled className="text-xs h-7 px-2">
+                          Tel yok
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Bugün Gönderilecek Sosyal Medya */}
+      {dueSocial.length > 0 && (
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                <span>📱</span>
+                Bugün Gönderilecek Sosyal Medya
+                <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-0.5 rounded-full">
+                  {dueSocial.length}
+                </span>
+              </CardTitle>
+              <Button asChild variant="ghost" size="sm" className="text-xs h-7">
+                <Link href="/iletisim/sekvanslar">
+                  Sekvanslar <ArrowRight className="w-3 h-3 ml-1" />
+                </Link>
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {dueSocial.map((cs) => {
+                const stepData = cs.contact_sequences?.steps?.find(s => s.step_no === cs.current_step);
+                const channel = stepData?.channel ?? "";
+                const customerName = cs.customers?.company_name ?? "Müşteri";
+                const channelIcon = channel === "instagram" ? "📸" : channel === "linkedin_dm" ? "💼" : "📘";
+                const channelLabel = channel === "instagram" ? "Instagram DM" : channel === "linkedin_dm" ? "LinkedIn DM" : "Facebook Mesaj";
+                const channelColor = channel === "instagram" ? "bg-pink-100 text-pink-700" : channel === "linkedin_dm" ? "bg-blue-100 text-blue-700" : "bg-indigo-100 text-indigo-700";
+
+                return (
+                  <div key={cs.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium text-slate-800 text-sm truncate">{customerName}</p>
+                        <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${channelColor}`}>
+                          {channelIcon} {channelLabel}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 truncate mt-0.5">
+                        {cs.contact_sequences?.name} · Adım {cs.current_step}
+                      </p>
+                    </div>
+                    <Link href={`/iletisim/sekvanslar/${cs.id}`} className="ml-3 flex-shrink-0">
+                      <Button size="sm" variant="outline" className="text-xs h-7 px-2">
+                        Gönder
+                      </Button>
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Overdue Invoices */}
       {overdueInvoices && overdueInvoices.length > 0 && (

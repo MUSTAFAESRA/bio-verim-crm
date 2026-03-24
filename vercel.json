@@ -3,6 +3,10 @@
     {
       "path": "/api/reminders/send-daily",
       "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/sequences/execute",
+      "schedule": "0 8 * * *"
     }
   ]
 }

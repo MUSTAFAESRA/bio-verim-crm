@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { createTemplate, deleteTemplate } from "@/actions/message-templates";
 import { CONTACT_TYPE_LABELS, CONTACT_TYPE_ICONS, TEMPLATE_CATEGORY_LABELS } from "@/lib/utils";
+import { AiTemplateGenerator } from "./ai-template-generator";
 
 const selectClass = "flex h-9 w-full rounded-md border border-slate-200 bg-white px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-green-600";
 
@@ -75,8 +76,9 @@ export default async function SablonlarPage() {
           )}
         </div>
 
-        {/* New Template Form */}
-        <div>
+        {/* AI Template Generator + New Template Form */}
+        <div className="space-y-4">
+          <AiTemplateGenerator templates={templates} />
           <Card>
             <CardHeader>
               <CardTitle className="text-sm flex items-center gap-2">

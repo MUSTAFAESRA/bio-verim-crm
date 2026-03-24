@@ -27,6 +27,7 @@ import {
   SOURCE_LABELS,
   QUOTE_STATUS_LABELS,
 } from "@/lib/utils";
+import { ContactHistory } from "@/components/musteriler/contact-history";
 import {
   Table,
   TableBody,
@@ -270,58 +271,21 @@ export default async function MusteriDetayPage({ params }: PageProps) {
         <div className="lg:col-span-2 space-y-5">
           {/* Contact History */}
           <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <MessageSquare className="w-4 h-4 text-blue-500" />
-                  İletişim Geçmişi ({contacts?.length ?? 0})
-                </CardTitle>
-                <Button asChild variant="outline" size="sm" className="h-7 text-xs">
-                  <Link href={`/iletisim/yeni?customer_id=${id}`}>
-                    <Plus className="w-3 h-3" /> Temas Ekle
-                  </Link>
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {contacts && contacts.length > 0 ? (
-                <div className="space-y-3">
-                  {contacts.map((log) => (
-                    <div key={log.id} className="flex gap-3 p-3 bg-slate-50 rounded-lg">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 text-sm">
-                        {log.contact_type === "call" ? "📞" :
-                         log.contact_type === "visit" ? "🤝" :
-                         log.contact_type === "email" ? "📧" :
-                         log.contact_type === "whatsapp" ? "💬" : "📋"}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="text-sm font-medium text-slate-700">
-                            {CONTACT_TYPE_LABELS[log.contact_type] || log.contact_type}
-                          </span>
-                          {log.outcome && (
-                            <Badge variant="secondary" className="text-xs">
-                              {OUTCOME_LABELS[log.outcome] || log.outcome}
-                            </Badge>
-                          )}
-                        </div>
-                        {log.subject && <p className="text-sm text-slate-600 mt-0.5">{log.subject}</p>}
-                        {log.notes && <p className="text-xs text-slate-400 mt-1">{log.notes}</p>}
-                        {log.next_action_date && (
-                          <p className="text-xs text-amber-600 mt-1">
-                            Sonraki aksiyon: {formatDate(log.next_action_date)} — {log.next_action}
-                          </p>
-                        )}
-                        <p className="text-xs text-slate-400 mt-1">{formatDate(log.contacted_at)}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-slate-400 text-center py-6">
-                  Henüz iletişim kaydı bulunmuyor
-                </p>
-              )}
+            <CardContent className="pt-5">
+              <ContactHistory
+                contacts={(contacts ?? []) as Array<{
+                  id: string;
+                  contact_type: string;
+                  notes: string | null;
+                  outcome: string | null;
+                  direction: string | null;
+                  subject: string | null;
+                  contacted_at: string;
+                  next_action_date: string | null;
+                  next_action: string | null;
+                }>}
+                customerId={id}
+              />
             </CardContent>
           </Card>
 

@@ -22,6 +22,9 @@ export async function createCustomer(formData: FormData) {
     segment: (formData.get("segment") as "lead" | "active" | "passive") || "lead",
     source: ((formData.get("source") as string) || "manual") as "manual" | "google_places" | "linkedin" | "facebook_lead" | "referral" | "other",
     notes: (formData.get("notes") as string) || null,
+    linkedin_url: (formData.get("linkedin_url") as string) || null,
+    instagram_url: (formData.get("instagram_url") as string) || null,
+    facebook_url: (formData.get("facebook_url") as string) || null,
     created_by: user.id,
   };
 
@@ -51,6 +54,9 @@ export async function updateCustomer(id: string, formData: FormData) {
     tax_office: (formData.get("tax_office") as string) || null,
     segment: (formData.get("segment") as "lead" | "active" | "passive"),
     notes: (formData.get("notes") as string) || null,
+    linkedin_url: (formData.get("linkedin_url") as string) || null,
+    instagram_url: (formData.get("instagram_url") as string) || null,
+    facebook_url: (formData.get("facebook_url") as string) || null,
     updated_at: new Date().toISOString(),
   };
 

@@ -45,6 +45,17 @@ export async function createContactLog(formData: FormData) {
   revalidatePath("/iletisim");
   revalidatePath(`/musteriler/${customerId}`);
 
+  // Arka planda heat score'u güncelle (temas sonrası AI analizi için)
+  // Fire-and-forget: await etmiyoruz, redirect bloklamasın
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    fetch(`${baseUrl}/api/ai/customer-heat-score`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ customerId, customerName: null, forceRefresh: true }),
+    }).catch(() => {}); // hata olursa sessizce geç
+  } catch { /* kritik değil */ }
+
   const redirectTo = formData.get("redirect_to") as string;
   if (redirectTo) redirect(redirectTo);
   redirect("/iletisim");

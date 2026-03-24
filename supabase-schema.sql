@@ -45,6 +45,13 @@ CREATE TABLE IF NOT EXISTS customers (
   source        TEXT CHECK (source IN ('manual','google_places','linkedin',
                                        'facebook_lead','referral','other')),
   notes         TEXT,
+  -- Sosyal medya profil linkleri
+  linkedin_url    TEXT,
+  instagram_url   TEXT,
+  facebook_url    TEXT,
+  -- Mesajlaşma PSID'leri (webhook tarafından otomatik doldurulur)
+  facebook_psid   TEXT,
+  instagram_psid  TEXT,
   assigned_to   UUID REFERENCES profiles(id) ON DELETE SET NULL,
   created_by    UUID REFERENCES profiles(id) ON DELETE SET NULL,
   created_at    TIMESTAMPTZ DEFAULT NOW(),
@@ -52,6 +59,8 @@ CREATE TABLE IF NOT EXISTS customers (
 );
 
 CREATE INDEX IF NOT EXISTS idx_customers_segment ON customers(segment);
+CREATE INDEX IF NOT EXISTS idx_customers_facebook_psid ON customers(facebook_psid) WHERE facebook_psid IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_customers_instagram_psid ON customers(instagram_psid) WHERE instagram_psid IS NOT NULL;
 
 -- Suppliers (Fason üretim tesisleri)
 CREATE TABLE IF NOT EXISTS suppliers (

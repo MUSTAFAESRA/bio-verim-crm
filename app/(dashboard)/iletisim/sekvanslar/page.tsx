@@ -1,11 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { ArrowLeft, Plus, PlayCircle, PauseCircle, ChevronRight } from "lucide-react";
+import { ArrowLeft, Plus, PlayCircle, PauseCircle, ChevronRight, Trash2, UserMinus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { assignSequence, pauseSequence, resumeSequence, advanceStep } from "@/actions/contact-sequences";
+import { assignSequence, pauseSequence, resumeSequence, advanceStep, deleteSequenceAssignment, markCustomerPassive } from "@/actions/contact-sequences";
 import { CONTACT_TYPE_ICONS, CONTACT_TYPE_LABELS, SEQUENCE_STATUS_LABELS } from "@/lib/utils";
 import { formatDate } from "@/lib/utils";
 
@@ -169,6 +169,16 @@ export default async function SekvanslarPage() {
                         >
                           Detay <ChevronRight className="w-3 h-3" />
                         </Link>
+                        <form action={markCustomerPassive.bind(null, cs.id)}>
+                          <button type="submit" className="text-xs text-amber-500 hover:text-amber-700 flex items-center gap-1 px-2 py-1 rounded hover:bg-amber-50" title="Müşteriyi pasife al">
+                            <UserMinus className="w-3 h-3" /> Pasif
+                          </button>
+                        </form>
+                        <form action={deleteSequenceAssignment.bind(null, cs.id)}>
+                          <button type="submit" className="text-xs text-red-400 hover:text-red-600 flex items-center gap-1 px-2 py-1 rounded hover:bg-red-50" title="Sekansı sil">
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </form>
                       </div>
                     </div>
                   </CardContent>

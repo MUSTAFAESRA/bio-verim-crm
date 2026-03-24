@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { Plus, MapPin, Phone, Search, UserPlus, Globe } from "lucide-react";
+import { Plus, MapPin, Phone, Search, UserPlus, Globe, Linkedin, Instagram, Facebook, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -61,12 +61,6 @@ export default async function MusteriAdayiPage({ searchParams }: PageProps) {
           <p className="text-sm text-slate-500 mt-0.5">Google, LinkedIn, Facebook ve manuel aday yönetimi</p>
         </div>
         <div className="flex gap-2">
-          <Button asChild variant="outline" size="sm">
-            <Link href="/musteri-adayi/bul">
-              <Globe className="w-4 h-4" />
-              Google ile Ara
-            </Link>
-          </Button>
           <Button asChild size="sm">
             <Link href="/musteri-adayi/yeni">
               <Plus className="w-4 h-4" />
@@ -76,8 +70,37 @@ export default async function MusteriAdayiPage({ searchParams }: PageProps) {
         </div>
       </div>
 
-      {/* Source Stats */}
-      <div className="grid grid-cols-4 gap-3">
+      {/* Platform Cards — Arama Araçları */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <Link href="/musteri-adayi/bul" className="bg-white border border-slate-200 rounded-xl p-4 hover:border-green-400 hover:shadow-sm transition-all group">
+          <div className="text-2xl mb-2">🗺️</div>
+          <p className="text-sm font-semibold text-slate-800 group-hover:text-green-600">Google Maps</p>
+          <p className="text-xs text-slate-500 mt-0.5">İl bazında bayi ara</p>
+        </Link>
+        <Link href="/musteri-adayi/linkedin" className="bg-white border border-slate-200 rounded-xl p-4 hover:border-blue-400 hover:shadow-sm transition-all group">
+          <Linkedin className="w-6 h-6 text-blue-600 mb-2" />
+          <p className="text-sm font-semibold text-slate-800 group-hover:text-blue-600">LinkedIn</p>
+          <p className="text-xs text-slate-500 mt-0.5">Şirket ve profesyonel ara</p>
+        </Link>
+        <Link href="/musteri-adayi/instagram" className="bg-white border border-slate-200 rounded-xl p-4 hover:border-pink-400 hover:shadow-sm transition-all group">
+          <Instagram className="w-6 h-6 text-pink-500 mb-2" />
+          <p className="text-sm font-semibold text-slate-800 group-hover:text-pink-500">Instagram</p>
+          <p className="text-xs text-slate-500 mt-0.5">Hashtag ile tara</p>
+        </Link>
+        <Link href="/musteri-adayi/facebook" className="bg-white border border-slate-200 rounded-xl p-4 hover:border-blue-400 hover:shadow-sm transition-all group">
+          <Facebook className="w-6 h-6 text-blue-500 mb-2" />
+          <p className="text-sm font-semibold text-slate-800 group-hover:text-blue-500">Facebook Grup</p>
+          <p className="text-xs text-slate-500 mt-0.5">Grup üyelerini tara</p>
+        </Link>
+      </div>
+
+      {/* KOL + Source Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <Link href="/musteri-adayi/kol-takip" className="bg-white border border-slate-200 rounded-xl p-4 hover:border-amber-400 hover:shadow-sm transition-all group col-span-1">
+          <Star className="w-5 h-5 text-amber-500 mb-1" />
+          <p className="text-xs text-slate-500">KOL / Önemli Kişi</p>
+          <p className="text-lg font-bold text-slate-800">Takip</p>
+        </Link>
         {[
           { label: "Google Places", icon: "🗺️", source: "google_places" },
           { label: "LinkedIn", icon: "💼", source: "linkedin" },

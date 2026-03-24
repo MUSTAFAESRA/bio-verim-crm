@@ -739,6 +739,51 @@ export type Database = {
         };
         Relationships: [];
       };
+      influencer_contacts: {
+        Row: {
+          id: string;
+          full_name: string;
+          title: string | null;
+          platform: "linkedin" | "instagram" | "facebook" | "youtube" | "other";
+          profile_url: string | null;
+          followers_count: number | null;
+          city: string | null;
+          phone: string | null;
+          email: string | null;
+          status: "not_contacted" | "dm_sent" | "responded" | "meeting_set" | "converted";
+          notes: string | null;
+          assigned_to: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          full_name: string;
+          title?: string | null;
+          platform: "linkedin" | "instagram" | "facebook" | "youtube" | "other";
+          profile_url?: string | null;
+          followers_count?: number | null;
+          city?: string | null;
+          phone?: string | null;
+          email?: string | null;
+          status?: "not_contacted" | "dm_sent" | "responded" | "meeting_set" | "converted";
+          notes?: string | null;
+          assigned_to?: string | null;
+        };
+        Update: {
+          full_name?: string;
+          title?: string | null;
+          platform?: "linkedin" | "instagram" | "facebook" | "youtube" | "other";
+          profile_url?: string | null;
+          followers_count?: number | null;
+          city?: string | null;
+          phone?: string | null;
+          email?: string | null;
+          status?: "not_contacted" | "dm_sent" | "responded" | "meeting_set" | "converted";
+          notes?: string | null;
+          assigned_to?: string | null;
+        };
+        Relationships: [];
+      };
       customer_sequences: {
         Row: {
           id: string;

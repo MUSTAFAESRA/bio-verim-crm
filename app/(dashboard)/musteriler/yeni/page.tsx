@@ -110,6 +110,30 @@ export default function YeniMusteriPage() {
             </div>
           </div>
 
+          {/* Sosyal Medya */}
+          <div>
+            <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wide mb-4">
+              Sosyal Medya (Opsiyonel)
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="linkedin_url">💼 LinkedIn Profil URL</Label>
+                <Input id="linkedin_url" name="linkedin_url" placeholder="linkedin.com/in/kullanici" />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="instagram_url">📸 Instagram Kullanıcı Adı</Label>
+                <Input id="instagram_url" name="instagram_url" placeholder="@kullanici veya kullanici" />
+              </div>
+              <div className="sm:col-span-2 space-y-1.5">
+                <Label htmlFor="facebook_url">📘 Facebook Profil / Sayfa URL</Label>
+                <Input id="facebook_url" name="facebook_url" placeholder="facebook.com/sayfaadi" />
+              </div>
+            </div>
+            <p className="text-xs text-slate-400 mt-2">
+              Bu alanlar sekans adımlarında DM gönderme linklerini otomatik oluşturmak için kullanılır.
+            </p>
+          </div>
+
           <div className="flex gap-3 pt-2">
             <Button type="submit" className="flex-1">Müşteri Ekle</Button>
             <Button asChild type="button" variant="outline">
